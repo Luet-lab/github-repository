@@ -1,0 +1,9 @@
+# CONFIGURE:
+# Optional list of luet repositories to fetch.
+# This is required in order to build on top of existing packages in other repositories
+repositories:
+- name: "mocaccino-desktop"
+  type: "http"
+  enable: true
+  urls:
+  - "https://get.mocaccino.org/mocaccino-desktop"
