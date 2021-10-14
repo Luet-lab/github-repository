@@ -3,6 +3,7 @@
 # CONFIGURE: Tweak to suit your needs
 # You might want to remove $PULL_REPOSITORY if you don't need to pull for any image
 
+FINAL_REPO=$(echo "$FINAL_REPO" | tr '[:upper:]' '[:lower:]')
 PULL_ARGS=
 if [ -n "$PULL_REPOSITORY" ]; then
   PULL_ARGS="--pull-repository $PULL_REPOSITORY"
