@@ -32,7 +32,8 @@ jobs:
     env:
       # CONFIGURE: FINAL_REPO is the container image which will be used
       # to push packages to.
-      FINAL_REPO: quay.io/mocaccino/mocaccino-community
+      #FINAL_REPO: quay.io/mocaccino/mocaccino-community
+      FINAL_REPO: ghcr.io/${{ github.repository_owner }}/${GITHUB_REPOSITORY#*/}
       CURRENT_PACKAGE:  ${{ matrix.category }}/${{ matrix.name }}@${{ matrix.version }}
       # Repository used to pull images from. needed if you list any repo in .luet.yaml
       PULL_REPOSITORY: quay.io/mocaccinocache/desktop
@@ -45,10 +46,18 @@ jobs:
         sudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET
     - run: |
         git fetch --prune --unshallow
-    # CONFIGURE: we use quay here in our example, adapt as needed
-    - name: Login to Quay Registry
-      run: echo ${{ secrets.QUAY_ROBOT_PASSWORD }} | docker login -u ${{ secrets.QUAY_ROBOT_USERNAME }} --password-stdin quay.io
+    # CONFIGURE: we might use quay here in our example, adapt as needed
+    # - name: Login to Quay Registry
+    #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    #   run: echo ${{ secrets.QUAY_ROBOT_PASSWORD }} | docker login -u ${{ secrets.QUAY_ROBOT_USERNAME }} --password-stdin quay.io
 
+    - if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}      
     - name: Install deps 🔧
       run: |
         curl https://get.mocaccino.org/luet/get_luet_root.sh | sudo sh
@@ -56,6 +65,9 @@ jobs:
       uses: actions/setup-go@v2
       with:
           go-version: '^1.16'
+    - name: Set 
+      if: ${{ github.event_name == 'push' }}
+      run: echo "PUSH_CACHE=true" >> $GITHUB_ENV
     - name: Build packages 🔧
       run: |
         export PATH=$PATH:/usr/local/go/bin
@@ -75,7 +87,7 @@ jobs:
   create-repo:
     needs: build
     env:
-      FINAL_REPO: quay.io/mocaccino/mocaccino-community
+      FINAL_REPO: ghcr.io/${{ github.repository_owner }}/${GITHUB_REPOSITORY#*/}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -85,9 +97,16 @@ jobs:
         sudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET
     - run: |
         git fetch --prune --unshallow
-    - name: Login to Quay Registry
-      run: echo ${{ secrets.QUAY_ROBOT_PASSWORD }} | docker login -u ${{ secrets.QUAY_ROBOT_USERNAME }} --password-stdin quay.io
-
+    # - name: Login to Quay Registry
+    #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    #   run: echo ${{ secrets.QUAY_ROBOT_PASSWORD }} | docker login -u ${{ secrets.QUAY_ROBOT_USERNAME }} --password-stdin quay.io
+    - if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}    
     - name: Install deps 🔧
       run: |
         curl https://get.mocaccino.org/luet/get_luet_root.sh | sudo sh
@@ -126,7 +145,7 @@ jobs:
           --push-images \
           --type docker \
           --output $FINAL_REPO \
-          --name "mocaccino-community" \
+          --name "example-repository" \
           --packages ${PWD}/build \
           --tree ${PWD}/packages
 
