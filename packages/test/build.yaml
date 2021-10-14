@@ -1,0 +1,12 @@
+package_dir: "/package"
+steps:
+- mkdir /package
+- echo "test" > /package/test.txt
+
+image: "alpine"
+
+# Or depend on other packages..
+# requires:
+# - category: "layers"
+#   name: "system-x"
+#   version: ">=0"

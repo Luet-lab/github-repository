@@ -36,7 +36,7 @@ jobs:
       FINAL_REPO: ghcr.io/${{ github.repository }}
       CURRENT_PACKAGE:  ${{ matrix.category }}/${{ matrix.name }}@${{ matrix.version }}
       # Repository used to pull images from. needed if you list any repo in .luet.yaml
-      PULL_REPOSITORY: quay.io/mocaccinocache/desktop
+      #PULL_REPOSITORY: quay.io/mocaccinocache/desktop
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

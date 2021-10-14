@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 # CONFIGURE: Tweak to suit your needs
 # You might want to remove $PULL_REPOSITORY if you don't need to pull for any image
 
