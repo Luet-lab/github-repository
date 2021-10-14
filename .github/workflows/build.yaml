@@ -33,7 +33,7 @@ jobs:
       # CONFIGURE: FINAL_REPO is the container image which will be used
       # to push packages to.
       #FINAL_REPO: quay.io/mocaccino/mocaccino-community
-      FINAL_REPO: ghcr.io/${{ github.repository_owner }}/${GITHUB_REPOSITORY#*/}
+      FINAL_REPO: ghcr.io/${{ github.repository }}
       CURRENT_PACKAGE:  ${{ matrix.category }}/${{ matrix.name }}@${{ matrix.version }}
       # Repository used to pull images from. needed if you list any repo in .luet.yaml
       PULL_REPOSITORY: quay.io/mocaccinocache/desktop
@@ -65,8 +65,8 @@ jobs:
       uses: actions/setup-go@v2
       with:
           go-version: '^1.16'
-    - name: Set 
-      if: ${{ github.event_name == 'push' }}
+    - if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      name: "Push cache"
       run: echo "PUSH_CACHE=true" >> $GITHUB_ENV
     - name: Build packages 🔧
       run: |
@@ -87,7 +87,7 @@ jobs:
   create-repo:
     needs: build
     env:
-      FINAL_REPO: ghcr.io/${{ github.repository_owner }}/${GITHUB_REPOSITORY#*/}
+      FINAL_REPO: ghcr.io/${{ github.repository }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

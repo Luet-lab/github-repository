@@ -4,12 +4,22 @@ Sample of Luet repository built on github actions and content with hosted on a c
 
 ## Setup
 
-The sample uses quay. So you need to have an account on either quay or on docker hub.
+The sample uses ghcr.io. It does not need any setup for the container registry.
 
-The github action workflow in `.github` builds the repository and uses the secret `QUAY_ROBOT_USERNAME` and `QUAY_ROBOT_PASSWORD` that needs to be set in the repository. You need to edit the pipeline in case you use docker hub.
+Just set 
 
-Change in the pipeline the `FINAL_REPO` variable to point to your container image.
+## Use a different registry
 
+You might want to tweak to other registry. In the workflow there are blocks commented for quay. 
+
+The github action workflow in `.github` builds the repository and uses the secret `QUAY_ROBOT_USERNAME` and `QUAY_ROBOT_PASSWORD` that needs to be set in the repository. You need to edit the pipeline in case you want to use a different registry. The block is commented by default.
+
+Change in the pipeline the `FINAL_REPO` variable to point to your container image in case you need it. For ghcr.io it is automatically generated.
+
+## Notes
+
+- Only pushing on `main` publishes packages. Pull requests and branches are just building on top.
+- `PULL_REPOSITORY` is set to the Desktop repository for sample purposes. You can comment it out or set to a different repository if you are building against another repository
 
 ## Building on top of other repositories
 
