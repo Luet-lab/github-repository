@@ -6,8 +6,6 @@ Sample of Luet repository built on github actions and content with hosted on a c
 
 The sample uses ghcr.io. It does not need any setup for the container registry.
 
-Just set 
-
 ## Use a different registry
 
 You might want to tweak to other registry. In the workflow there are blocks commented for quay. 
