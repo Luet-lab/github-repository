@@ -91,10 +91,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Release space from worker
-      run: |
-        sudo rm -rf /usr/local/lib/android # will release about 10 GB if you don't need Android
-        sudo rm -rf /usr/share/dotnet # will release about 20GB if you don't need .NET
     - run: |
         git fetch --prune --unshallow
     # - name: Login to Quay Registry
@@ -141,6 +137,7 @@ jobs:
     - name: Create repo 🔧
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       run: |
+          FINAL_REPO=$(echo "$FINAL_REPO" | tr '[:upper:]' '[:lower:]')
           sudo -E luet create-repo \
           --push-images \
           --type docker \
