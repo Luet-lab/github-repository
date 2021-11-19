@@ -123,10 +123,11 @@ jobs:
       if: ${{ github.event_name == 'push' && github.ref != 'refs/heads/main' }}
       run: |
            curl https://get.mocaccino.org/luet/get_luet_root.sh | sudo sh
+           repo_name=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
            sudo -E luet create-repo \
             --push-images \
             --type docker \
-            --output ghcr.io/${{ github.repository }} \
+            --output $repo_name \
             --name "github-repository" \
             --packages build \
             --tree packages
