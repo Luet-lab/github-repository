@@ -115,19 +115,21 @@ jobs:
       with:
         # tree: packages
         downloadMeta: true
+        downloadAllMeta: true
         FINAL_REPO: ghcr.io/${{ github.repository }}
         REPOSITORY_TYPE: docker
 
     - name: Create repo 🔧
-      uses: mudler/luet-github-action@master
       if: ${{ github.event_name == 'push' && github.ref != 'refs/heads/main' }}
-      with:
-        # tree: packages
-        createRepo: true
-        pushCache: true
-        FINAL_REPO: ghcr.io/${{ github.repository }}
-        REPOSITORY_TYPE: docker
-
+      run: |
+           curl https://get.mocaccino.org/luet/get_luet_root.sh | sudo sh
+           sudo -E luet create-repo \
+            --push-images \
+            --type docker \
+            --output ghcr.io/${{ github.repository }} \
+            --name "github-repository" \
+            --packages build \
+            --tree packages
     # - name: Deploy GH Pages 🚀
     #   if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     #   uses: JamesIves/github-pages-deploy-action@3.6.2
